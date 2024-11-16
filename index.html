@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Actividad desarrollo web</title>
+  <script>
+    const isPalindrome = (string) => {
+      const clean = string.toLowerCase().replace(/[^a-z0-9]/g, "");
+      if (clean === clean.split("").reverse().join("")) {
+        alert("La cadena es un palindromo");
+      } else {
+        alert("La cadena NO es un palindromo");
+      }
+    }
+
+    const isGreatherThan = (num1, num2) => {
+      if (+num1 > +num2) {
+        alert(`el número ${num1} es mayor`);
+      } else {
+        alert(`el número ${num2} es mayor`);
+      }
+    }
+
+    const displayVowels = (string) => {
+      if (!string) {
+        alert("No ingresaste una frase");
+        return;
+      }
+      const vowels = new Set();
+
+      for (const letter of string.toLowerCase()) {
+        if ("aeiouáéíóúü".includes(letter)) {
+          vowels.add(letter);
+        }
+      }
+      if (vowels.size <= 0) {
+        alert("No se encontraron vocales en la frase");
+        return;
+      }
+      alert(`Las vocales en la frase son: ${[...vowels].join(", ")}`);
+    }
+
+    const displayRepeatedVowels = (string) => {
+      if (!string) {
+        alert("No ingresaste una frase");
+        return;
+      }
+      const vowels = {a: 0, e: 0, i: 0, o: 0, u: 0};
+
+      for (const letter of string.toLowerCase()) {
+        if (!"aeiou".includes(letter)) continue;
+        ++vowels[letter];
+      }
+      if (Object.keys(vowels).length < 0) {
+        alert("No se encontraron vocales en la frase");
+        return;
+      }
+      let vowelsRepeated = "";
+      for (const vowel in vowels) {
+        vowelsRepeated += `${vowel}: ${vowels[vowel]}\n`
+      }
+      alert(`Las vocales en la frase son: \n${vowelsRepeated}`);
+    }
+
+    
+
+  </script>
+</head>
+
+<body>
+  <hr>
+  <h2>Ejercicios JavaScript</h2>
+  <fieldset>
+    <legend>Punto 1</legend>
+    <form>
+      <input type="text" id="palindrome-input">
+      <button onclick="isPalindrome(document.getElementById('palindrome-input').value)">
+        Detectar palíndromo
+      </button>
+    </form>
+  </fieldset>
+
+  <fieldset>
+    <legend>Punto 2</legend>
+    <form>
+      <input type="number" id="greather-than-1-input">
+      <input type="number" id="greather-than-2-input">
+      <button
+        onclick="isGreatherThan(document.getElementById('greather-than-1-input').value, document.getElementById('greather-than-2-input').value)">
+        Detectar el mayor
+      </button>
+    </form>
+  </fieldset>
+
+  <fieldset>
+    <legend>Punto 3</legend>
+    <form>
+      <input id="vowels-input">
+      <button onclick="displayVowels(document.getElementById('vowels-input').value)">
+        Mostrar vocales
+      </button>
+    </form>
+  </fieldset>
+
+  <fieldset>
+    <legend>Punto 4</legend>
+    <form>
+      <input id="vowels-repeated-input">
+      <button onclick="displayRepeatedVowels(document.getElementById('vowels-repeated-input').value)">
+        Mostrar vocales repetidas
+      </button>
+    </form>
+  </fieldset>
+
+  <hr>
+  <h2>Ejercicio AJAX</h2>
+
+  <fieldset>
+    <legend>Punto 1</legend>
+    <form>
+      <input id="url-page">
+    </form>
+    <button onclick="getURL()">Mostrar contenidos</button>
+  </fieldset>
+
+  <p style="display: flex; gap: 20px">
+    <b>3. Estado petición:</b> 
+    <div id="status"></div>
+  </p>
+  <p style="display: flex; gap: 20px">
+    <b>4. Cabeceras:</b> <div id="headers"></div>
+  </p>
+  <p style="display: flex; gap: 20px">
+    <b>5. Código de respuesta:</b> 
+    <div id="status-code"></div>
+  </p>
+  <div>
+    <b>2. Contenido:</b> <div id="contents"></div>
+  </div>
+
+  <script>
+    document.getElementById('url-page').value = window.location.href;
+
+    const urlInput = document.getElementById("url-page");
+    const status = document.getElementById("status");
+    const contents = document.getElementById("contents");
+    const headers = document.getElementById("headers");
+    const statusCode = document.getElementById("status-code");
+
+    function getURL() {
+      const url = urlInput.value.trim();
+        if (!url) {
+          alert("Por favor, introduce una URL válida.");
+          return;
+        }
+
+        const xhr = new XMLHttpRequest();
+
+        xhr.onreadystatechange = () => {
+          switch (xhr.readyState) {
+            case 0:
+              status.textContent = "No iniciada";
+              break;
+            case 1:
+              status.textContent = "Cargando...";
+              break;
+            case 2:
+              status.textContent = "Cabeceras recibidas";
+              break;
+            case 3:
+              status.textContent = "Descargando datos...";
+              break;
+            case 4:
+              console.log({urlRes: xhr.responseText})
+              status.textContent = "Completada";
+              statusCode.textContent = `${xhr.status} - ${xhr.statusText}`;
+              contents.innerHTML = xhr.responseText || "No hay contenido disponible.";
+              headers.innerHTML = xhr.getAllResponseHeaders();
+              break;
+          }
+        };
+
+        xhr.onerror = () => {
+          status.textContent = "Error en la solicitud.";
+          statusCode.textContent = `${xhr.status} - ${xhr.statusText}`;
+          contents.value = "Error al realizar la solicitud.";
+          headers.value = "N/A";
+        };
+        
+        xhr.open("GET", url, true);
+        xhr.send();
+    }
+  </script>
+</body>
+
+</html>
