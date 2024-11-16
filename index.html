@@ -175,7 +175,6 @@
             status.textContent = "Descargando datos...";
             break;
           case 4:
-            console.log({ urlRes: xhr.responseText })
             status.textContent = "Completada";
             statusCode.textContent = `${xhr.status} - ${xhr.statusText}`;
             contents.innerHTML = xhr.responseText || "No hay contenido disponible.";
