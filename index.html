@@ -47,7 +47,7 @@
         alert("No ingresaste una frase");
         return;
       }
-      const vowels = {a: 0, e: 0, i: 0, o: 0, u: 0};
+      const vowels = { a: 0, e: 0, i: 0, o: 0, u: 0 };
 
       for (const letter of string.toLowerCase()) {
         if (!"aeiou".includes(letter)) continue;
@@ -64,7 +64,7 @@
       alert(`Las vocales en la frase son: \n${vowelsRepeated}`);
     }
 
-    
+
 
   </script>
 </head>
@@ -126,18 +126,20 @@
   </fieldset>
 
   <p style="display: flex; gap: 20px">
-    <b>3. Estado petición:</b> 
-    <div id="status"></div>
+    <b>3. Estado petición:</b>
+  <div id="status"></div>
   </p>
   <p style="display: flex; gap: 20px">
-    <b>4. Cabeceras:</b> <div id="headers"></div>
+    <b>4. Cabeceras:</b>
+  <div id="headers"></div>
   </p>
   <p style="display: flex; gap: 20px">
-    <b>5. Código de respuesta:</b> 
-    <div id="status-code"></div>
+    <b>5. Código de respuesta:</b>
+  <div id="status-code"></div>
   </p>
   <div>
-    <b>2. Contenido:</b> <div id="contents"></div>
+    <b>2. Contenido:</b>
+    <div id="contents"></div>
   </div>
 
   <script>
@@ -151,46 +153,46 @@
 
     function getURL() {
       const url = urlInput.value.trim();
-        if (!url) {
-          alert("Por favor, introduce una URL válida.");
-          return;
+      if (!url) {
+        alert("Por favor, introduce una URL válida.");
+        return;
+      }
+
+      const xhr = new XMLHttpRequest();
+
+      xhr.onreadystatechange = () => {
+        switch (xhr.readyState) {
+          case 0:
+            status.textContent = "No iniciada";
+            break;
+          case 1:
+            status.textContent = "Cargando...";
+            break;
+          case 2:
+            status.textContent = "Cabeceras recibidas";
+            break;
+          case 3:
+            status.textContent = "Descargando datos...";
+            break;
+          case 4:
+            console.log({ urlRes: xhr.responseText })
+            status.textContent = "Completada";
+            statusCode.textContent = `${xhr.status} - ${xhr.statusText}`;
+            contents.innerHTML = xhr.responseText || "No hay contenido disponible.";
+            headers.innerHTML = xhr.getAllResponseHeaders();
+            break;
         }
+      };
 
-        const xhr = new XMLHttpRequest();
+      xhr.onerror = () => {
+        status.textContent = "Error en la solicitud.";
+        statusCode.textContent = `${xhr.status} - ${xhr.statusText}`;
+        contents.value = "Error al realizar la solicitud.";
+        headers.value = "N/A";
+      };
 
-        xhr.onreadystatechange = () => {
-          switch (xhr.readyState) {
-            case 0:
-              status.textContent = "No iniciada";
-              break;
-            case 1:
-              status.textContent = "Cargando...";
-              break;
-            case 2:
-              status.textContent = "Cabeceras recibidas";
-              break;
-            case 3:
-              status.textContent = "Descargando datos...";
-              break;
-            case 4:
-              console.log({urlRes: xhr.responseText})
-              status.textContent = "Completada";
-              statusCode.textContent = `${xhr.status} - ${xhr.statusText}`;
-              contents.innerHTML = xhr.responseText || "No hay contenido disponible.";
-              headers.innerHTML = xhr.getAllResponseHeaders();
-              break;
-          }
-        };
-
-        xhr.onerror = () => {
-          status.textContent = "Error en la solicitud.";
-          statusCode.textContent = `${xhr.status} - ${xhr.statusText}`;
-          contents.value = "Error al realizar la solicitud.";
-          headers.value = "N/A";
-        };
-        
-        xhr.open("GET", url, true);
-        xhr.send();
+      xhr.open("GET", url, true);
+      xhr.send();
     }
   </script>
 </body>
